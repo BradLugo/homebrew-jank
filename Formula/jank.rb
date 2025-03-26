@@ -45,15 +45,14 @@ class Jank < Formula
   end
 
   test do
-    jank = bin/"jank"
-
-    (testpath/"test.jank").write <<~JANK
+    test_file = testpath/"test.jank"
+    test_file.write <<~JANK
       ((fn [] (+ 5 7)))
     JANK
 
-    assert_equal "12", shell_output("#{jank} run test.jank").strip.lines.last
+    assert_equal "12", shell_output("#{bin}/jank run #{test_file}").strip.lines.last
 
-    assert_predicate jank, :exist?, "jank must exist"
+    assert_path_exists test_file
     assert_predicate jank, :executable?, "jank must be executable"
   end
 end

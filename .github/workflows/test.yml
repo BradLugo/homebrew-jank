@@ -28,8 +28,6 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: brew install-bundler-gems
 
-      # - run: brew install git-lfs && git lfs install && sudo ln -s "$(which git-lfs)" "$(git --exec-path)/git-lfs"
-
       - run: brew test-bot --only-cleanup-before
 
       - run: brew test-bot --only-setup
