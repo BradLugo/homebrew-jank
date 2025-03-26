@@ -16,6 +16,7 @@ class Jank < Formula
   depends_on "openssl"
 
   def install
+    ENV.prepend_path "PATH", Formula["git-lfs"].opt_bin
     ENV.prepend_path "PATH", Formula["llvm@19"].opt_bin
 
     ENV.append "LDFLAGS", "-Wl,-rpath,#{Formula["llvm@19"].opt_lib}"
@@ -39,6 +40,7 @@ class Jank < Formula
 
     system "./bin/configure",
            "-GNinja",
+           "-DHOMEBREW_ALLOW_FETCHCONTENT=ON",
            *std_cmake_args
     system "./bin/compile"
     system "./bin/install"
