@@ -18,19 +18,29 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@master
 
       - name: Cache Homebrew Bundler RubyGems
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
           restore-keys: ${{ matrix.os }}-rubygems-
 
-      - run: brew install git-lfs && git lfs install && sudo ln -s "$(which git-lfs)" "$(git --exec-path)/git-lfs"
+      - name: Install Homebrew Bundler RubyGems
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: brew install-bundler-gems
 
-      - run: brew install jank && brew test jank && file "$(brew --prefix)/bin/jank"
+      # - run: brew install git-lfs && git lfs install && sudo ln -s "$(which git-lfs)" "$(git --exec-path)/git-lfs"
+
+      - run: brew test-bot --only-cleanup-before
+
+      - run: brew test-bot --only-setup
+
+      - run: brew test-bot --only-tap-syntax
+
+      - run: brew test-bot --only-formulae
 
       - name: Upload bottles as artifact
         if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: bottles_${{ matrix.os }}
           path: '*.bottle.*'
